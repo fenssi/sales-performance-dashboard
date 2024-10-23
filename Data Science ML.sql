@@ -1,31 +1,3 @@
-create table transaction_detail (po_number text, transaction_date date, order_id text, 
-				order_status text, payment_group text, payment_method text, shipping_agency text, 
-				shipping_cost text, total_project_value bigint, voucher_val text, voucher_code text,
-				revenue integer, seller_id text,seller_category text, buyer_id text)
-
-
-create table order_detail (order_id text, product_id text, quantity integer, price_total integer, 
-							free_shipping boolean, ppn integer, weight_total integer, unit text, weight_unit text)
-
-
-
-
---change data type
-alter table transaction_detail
-alter column order_id type integer
-
-select *
-	from transaction_detail
-
-
----MONTHLY TOTAL ORDER
-select
-	extract(month from transaction_date) as monthly,
-	sum(revenue) as total_gmv
-from transaction_detail
-group by extract(month from transaction_date)
-
-
 ---OVERVIEW (CTE)
 with buyer_table as (
 	select trx.transaction_date,
@@ -89,35 +61,3 @@ from combined_table ct
 inner join order_detail od on ct.order_id = od.order_id
 inner join products pd on pd.product_id = od.product_id
 where ct.order_id is not null
-
-
----PRODUCT DETAIL
-select pd.product_id,
-		pd.product_name,
-		pd.main_cat,
-		pd.sub_cat1,
-		pd.price_per_item,
-		pd.rating,
-		pd.brand,
-		od.order_id,
-		od.quantity,
-		od.price_total,
-		od.free_shipping,
-		od.price_total
-from products pd
-left join order_detail od
-on pd.product_id = od.product_id
-where pd.product_id is not null
-	and pd.main_cat is not null
-	and od.order_id is not null
-
-
-
-select *
-from transaction_detail
-
-select *
-from products
-
-select *
-from order_detail
