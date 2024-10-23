@@ -1,4 +1,3 @@
----OVERVIEW (CTE)
 with buyer_table as (
 	select trx.transaction_date,
 			trx.order_id,
@@ -7,11 +6,15 @@ with buyer_table as (
 			trx.buyer_id,
 			trx.seller_id,
 			trx.seller_category,
-			u.flag
+			trx.voucher_val,
+			u.flag,
+			u.province,
+			u.city
 	from transaction_detail trx
 	inner join  users u
 	on trx.buyer_id = u.uid
 	where trx.order_status = 'Selesai'
+			and trx.order_id is not null
 			and trx.buyer_id is not null
 			and trx.seller_id is not null
 ), 
@@ -23,11 +26,15 @@ with buyer_table as (
 			trx.buyer_id,
 			trx.seller_id,
 			trx.seller_category,
-			u.flag
+			trx.voucher_val,
+			u.flag,
+			u.province,
+			u.city
 	from transaction_detail trx
 	inner join  users u
 	on trx.seller_id = u.uid
 	where trx.order_status = 'Selesai'
+			and trx.order_id is not null
 			and trx.buyer_id is not null
 			and trx.seller_id is not null
 ),
@@ -46,7 +53,10 @@ select
 	ct.buyer_id,
 	ct.seller_id,
 	ct.seller_category,
+	ct.voucher_val,
 	ct.flag,
+	ct.province,
+	ct.city,
 	pd.product_name,
 	pd.main_cat,
 	pd.sub_cat1,
@@ -60,4 +70,3 @@ select
 from combined_table ct
 inner join order_detail od on ct.order_id = od.order_id
 inner join products pd on pd.product_id = od.product_id
-where ct.order_id is not null
